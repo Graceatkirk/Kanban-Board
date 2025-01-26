@@ -1,9 +1,12 @@
 import { UserLogin } from "../interfaces/UserLogin";
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const API_URL = 'http://localhost:3001';  // Hardcoded for testing
 
 const login = async (userInfo: UserLogin) => {
   try {
+    console.log('Attempting login to:', `${API_URL}/auth/login`);
+    console.log('With credentials:', userInfo);
+
     const response = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',
       headers: {
@@ -12,14 +15,17 @@ const login = async (userInfo: UserLogin) => {
       body: JSON.stringify(userInfo),
     });
 
+    console.log('Response status:', response.status);
+
     if (!response.ok) {
       const errorData = await response.json();
+      console.error('Server error:', errorData);
       throw new Error(errorData.message || 'Login failed');
     }
 
     const data = await response.json();
-    
-    // Store the token in localStorage
+    console.log('Login successful:', data);
+
     if (data.token) {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
@@ -27,10 +33,8 @@ const login = async (userInfo: UserLogin) => {
 
     return data;
   } catch (error) {
-    if (error instanceof Error) {
-      throw new Error(error.message);
-    }
-    throw new Error('An unexpected error occurred');
+    console.error('Login error:', error);
+    throw error;
   }
 };
 
