@@ -34,8 +34,7 @@ export const login = async (req: Request, res: Response) => {
       message: 'Login successful',
       token,
       user: {
-        id: user.id,
-        username: user.username
+        username
       }
     });
   } catch (error) {
@@ -76,8 +75,7 @@ export const register = async (req: Request, res: Response) => {
       message: 'User registered successfully',
       token,
       user: {
-        id: user.id,
-        username: user.username
+        username
       }
     });
   } catch (error) {

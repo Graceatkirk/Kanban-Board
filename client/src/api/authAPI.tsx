@@ -1,13 +1,12 @@
 import { UserLogin } from "../interfaces/UserLogin";
 
-const API_URL = 'http://localhost:3001';  // Hardcoded for testing
 
 const login = async (userInfo: UserLogin) => {
   try {
-    console.log('Attempting login to:', `${API_URL}/auth/login`);
+    console.log('Attempting login to:', `/auth/login`);
     console.log('With credentials:', userInfo);
 
-    const response = await fetch(`${API_URL}/auth/login`, {
+    const response = await fetch(`/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
