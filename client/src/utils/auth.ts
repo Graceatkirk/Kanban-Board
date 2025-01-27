@@ -12,24 +12,27 @@ class AuthService {
     try {
       return jwtDecode<CustomJwtPayload>(token);
     } catch (error) {
+      console.error('Error decoding token:', error);
       return null;
     }
   }
 
   loggedIn(): boolean {
     const token = this.getToken();
-    return token !== null && !this.isTokenExpired(token);
+    const isValid = token !== null && !this.isTokenExpired(token);
+    console.log('Checking if logged in:', { token: !!token, isValid });
+    return isValid;
   }
   
   isTokenExpired(token: string): boolean {
     try {
       const decoded = jwtDecode<JwtPayload>(token);
       if (!decoded.exp) return true;
-      
-      // Check if the token is expired
-      // exp is in seconds, Date.now() is in milliseconds
-      return decoded.exp * 1000 < Date.now();
+      const isExpired = decoded.exp * 1000 < Date.now();
+      console.log('Token expiration check:', { exp: decoded.exp, now: Date.now(), isExpired });
+      return isExpired;
     } catch (error) {
+      console.error('Error checking token expiration:', error);
       return true;
     }
   }
@@ -39,14 +42,16 @@ class AuthService {
   }
 
   login(idToken: string): void {
+    console.log('Auth Service: Storing token and redirecting');
     localStorage.setItem('token', idToken);
-    window.location.assign('/'); // Redirect to home page
+    window.location.assign('/');
   }
 
   logout(): void {
+    console.log('Auth Service: Logging out');
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    window.location.assign('/login'); // Redirect to login page
+    window.location.assign('/login');
   }
 }
 

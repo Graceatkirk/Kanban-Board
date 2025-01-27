@@ -3,6 +3,9 @@ import { User } from '../models/user.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
+const SALT = 10;
+
+
 // Login handler
 export const login = async (req: Request, res: Response) => {
   try {
@@ -11,13 +14,14 @@ export const login = async (req: Request, res: Response) => {
     const user = await User.findOne({ where: { username } });
     
     if (!user) {
-      return res.status(401).json({ message: 'Invalid username or password' });
+      return res.status(401).json({ message: 'Invalid username' });
     }
 
     const isValidPassword = await bcrypt.compare(password, user.password);
     
+
     if (!isValidPassword) {
-      return res.status(401).json({ message: 'Invalid username or password' });
+      return res.status(401).json({ message: 'Invalid password' });
     }
 
     const token = jwt.sign(
@@ -52,7 +56,8 @@ export const register = async (req: Request, res: Response) => {
     }
 
     // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, SALT);
+    console.log({ password, hashedPassword });
 
     // Create new user
     const user = await User.create({
